@@ -1,43 +1,50 @@
 import random
+from exception import *
 class Unit:
 
+    units_in_battle = []
     armor = 12
     max_hp = 8
     max_stamina = 6
-
+    units_in_grave = []
 
 
     def __init__(self, name):
         self.name = name
         self.hp = self.max_hp
         self.stamina = self.max_stamina
+        self.units_in_battle.append(self)
 
-    #def __del__(self):
-     #   print(f'{self.name} умер(')
+
 
     def __add__(self, other):
         if isinstance(other, int):
             self.hp += other
+
 
     def __sub__(self, other):
         if isinstance(other, int):
             self.hp -= other
 
     def attack(self, target, weapon=None):
+        if target not in Unit.units_in_battle:
+            raise UnitNameError("Персонаж с таким именем не найден")
+
+
+        if self.stamina == 0:
+            self.rest()
         dam_1k4 = random.randint(1, 4)
         if self.hp <= 0:
-            print(f"{self.name} повержен и не может больше сражаться")
+            print(f"\n{self.name} повержен и не может больше сражаться")
 
-        # elif target.hp <= 0:
-        #  print(f"Соперник {target.name} повержен.")
 
         elif self.stamina <= 0:
-            print(f"У {self.name} больше нет сил. Нужен отдых.")
+            print(f"\nУ {self.name} больше нет сил. Нужен отдых.")
 
         else:
             self.stamina -= 1
 
-            print(f"{self.name} атакует {target.name} \nуспех решит бросок кубика...")
+            print(f"\n{self.name} атакует {target.name} \nуспех решит бросок кубика...")
 
             dice_res = random.randint(1, 20)
             if weapon:
@@ -66,9 +73,11 @@ class Unit:
 
     def take_damage(self, damage):
         self - damage
-        print(f"{self.name} получает {damage} урона!")
+        print(f"\n{self.name} получает {damage} урона!")
         if self.hp <= 0:
+            self.hp = 0
             print(f"{self.name} погиб...")
+
         else:
             print(f"У него остаётся всего {self.hp} жизней!")
 
@@ -76,11 +85,35 @@ class Unit:
         if self.hp <= 0:
             print(f"{self.name} уже не оправится...")
         else:
-            self.stamina = self.max_stamina
-            self + random.randint(1, 6)
+            stam_buff = random.randint(2, 4)
+            hp_buff = random.randint(1, 6)
+            self.stamina += stam_buff
+            self + hp_buff
+            if self.hp > self.max_hp:
+                self.hp = self.max_hp
+
+            if self.stamina > self.max_stamina:
+                self.stamina = self.max_stamina
+
+
+
+            print(f"\n{self.name} отступил, чтобы восстановить силы:\n"
+                  f"{stam_buff} запаса сил восстановлено! {hp_buff} hp восстановлено!\n"
+                  f"Текущие здоровье: {self.hp}/{self.max_hp}; Запас сил: {self.stamina}/{self.max_stamina}")
+
+    def __del__(self):
+        pass
+
+
 
     def __str__(self):
-        return f"Максимальное значение здоровья: {self.max_hp};\nМаксимальное значение запаса сил {self.max_stamina};\nКласс брони: {self.armor}"
+        if self == self.units_in_battle:
+            for unit in self.units_in_battle:
+                return f"{unit.name}"
+        else:
+            return f"Максимальное значение здоровья: {self.max_hp};\nМаксимальное значение запаса сил {self.max_stamina};\nКласс брони: {self.armor}"
+
+
 class Human:
 
     def battle_cry(self):
