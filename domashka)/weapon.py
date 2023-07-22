@@ -1,7 +1,10 @@
+from exception import *
 class Weapon:
     def __init__(self, name, w_damage):
         self.name = name
         self.w_damage = w_damage
+        if self.w_damage > 12:
+            raise SoMuchDamage("Указан слишком большой урон")
 
     def __str__(self):
         return f"{self.name} (Урон: {self.w_damage})"
