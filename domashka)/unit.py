@@ -1,7 +1,6 @@
 import random
 class Unit:
 
-    units = []
     armor = 12
     max_hp = 8
     max_stamina = 6
@@ -12,7 +11,6 @@ class Unit:
         self.name = name
         self.hp = self.max_hp
         self.stamina = self.max_stamina
-        self.units.append(self.name)
 
     #def __del__(self):
      #   print(f'{self.name} умер(')
@@ -26,7 +24,7 @@ class Unit:
             self.hp -= other
 
     def attack(self, target, weapon=None):
-        self.dam_1k4 = random.randint(1, 4)
+        dam_1k4 = random.randint(1, 4)
         if self.hp <= 0:
             print(f"{self.name} повержен и не может больше сражаться")
 
@@ -45,12 +43,12 @@ class Unit:
             if weapon:
                 self.atck_dam = random.randint(1, weapon.w_damage)
             else:
-                self.atck_dam = self.dam_1k4
+                self.atck_dam = dam_1k4
 
             if dice_res == 1:
 
                 print(
-                    f"Результат: {dice_res}. Критический промах... {self.name} подскальзывается, падает на землю и получает {self.dam_1k4} урона!")
+                    f"Результат: {dice_res}. Критический промах... {self.name} подскальзывается, падает на землю и получает {dam_1k4} урона!")
                 self.take_damage(self.atck_dam)
 
             elif dice_res >= self.armor and dice_res != 20:
